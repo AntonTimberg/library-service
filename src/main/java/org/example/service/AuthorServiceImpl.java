@@ -1,67 +1,48 @@
 package org.example.service;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.example.dao.AuthorDAO;
+import org.example.dao.AuthorDAOImpl;
 import org.example.model.Author;
-import org.example.repository.AuthorRepository;
-import org.example.controller.dto.AuthorDTO;
-import org.example.controller.dto.mapper.AuthorMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
-@Service
 public class AuthorServiceImpl implements AuthorService{
-    private final AuthorRepository authorRepo;
-    private final AuthorMapper authorMapper;
+    private final AuthorDAO authorDAO;
 
-    @Autowired
-    public AuthorServiceImpl(AuthorRepository authorRepo, AuthorMapper authorMapper) {
-        this.authorRepo = authorRepo;
-        this.authorMapper = authorMapper;
+    public AuthorServiceImpl() {
+        this.authorDAO = new AuthorDAOImpl();
+    }
+
+    public AuthorServiceImpl(AuthorDAO authorDAO) {
+        this.authorDAO = authorDAO;
     }
 
     @Override
-    public AuthorDTO findById(Long id) {
-        return authorRepo.findById(id)
-                .map(authorMapper::convert)
-                .orElseThrow(() -> new EntityNotFoundException("Автор с id=" + id + " не найден"));
+    public Optional<Author> findById(int id) {
+        return authorDAO.findById(id);
     }
 
     @Override
-    public List<AuthorDTO> findAll() {
-        List<Author> authors = authorRepo.findAll();
-        return authors.stream().map(authorMapper::convert).collect(Collectors.toList());
+    public List<Author> findAll() {
+        return authorDAO.findAll();
     }
 
     @Override
-    @Transactional
-    public AuthorDTO save(Author author) {
+    public void save(Author author) {
         validateAuthor(author);
-        return authorMapper.convert(authorRepo.save(author));
+        authorDAO.save(author);
     }
 
     @Override
-    @Transactional
-    public AuthorDTO update(Author author) {
+    public void update(Author author) {
         validateAuthor(author);
-
-        if (!authorRepo.existsById(author.getId())) {
-            throw new EntityNotFoundException("Автор с id=" + author.getId() + " не найден");
-        }
-
-        return authorMapper.convert(authorRepo.save(author));
+        authorDAO.update(author);
     }
 
     @Override
-    @Transactional
-    public void delete(Long id) {
-        Author author = authorRepo.findById(id).get();
-        if (author != null) {
-            authorRepo.deleteById(id);
-        } else throw new EntityNotFoundException("Автор с id=" + author.getId() + " не найден");
+    public void delete(int id) {
+        authorDAO.delete(id);
     }
 
     private void validateAuthor(Author author) {

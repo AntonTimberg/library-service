@@ -1,47 +1,26 @@
 package org.example.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
-@Entity
-@Table(name = "genres")
 public class Genre {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(name = "name", nullable = false)
+    private int id;
     private String name;
-    @ManyToMany(mappedBy = "genres")
-    private Set<Book> books = new HashSet<>();
+    private List<Book> books = new ArrayList<>();
 
-    public Genre() {}
+    public Genre() {
+    }
 
     public Genre(String name) {
         this.name = name;
     }
 
-    public void addBook(Book book) {
-        boolean exists = books.stream().anyMatch(b -> b.getTitle().equals(book.getTitle()));
-        if (!exists) {
-            books.add(book);
-            book.getGenres().add(this);
-        }
-    }
-
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -53,12 +32,30 @@ public class Genre {
         this.name = name;
     }
 
-    public Set<Book> getBooks() {
+    public List<Book> getBooks() {
         return books;
     }
 
-    public void setBooks(Set<Book> books) {
-        this.books = books;
+    public void addBook(Book book) {
+        if (!this.books.contains(book)) {
+            this.books.add(book);
+            book.getGenres().add(this);
+        }
+    }
+
+    public void removeBook(Book book) {
+        if (this.books.remove(book)) {
+            book.getGenres().remove(this);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Genre{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", books=" + books +
+                '}';
     }
 
     @Override
@@ -66,11 +63,11 @@ public class Genre {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Genre genre = (Genre) o;
-        return id == genre.id && Objects.equals(name, genre.name);
+        return id == genre.id && Objects.equals(name, genre.name) && Objects.equals(books, genre.books);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id, name, books);
     }
 }

@@ -1,62 +1,27 @@
 package org.example.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
-@Entity
-@Table(name = "books")
 public class Book {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(name = "title", nullable = false)
+    private int id;
     private String title;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "author_id", nullable = false)
-    private Author author;
-
-    @ManyToMany
-    @JoinTable(
-            name = "book_genre",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "genre_id")
-    )
-    private Set<Genre> genres = new HashSet<>();
+    private int authorId;
+    private List<Genre> genres = new ArrayList<>();
 
     public Book() {}
 
-    public Book(String title, Author author) {
+    public Book(String title, int authorId) {
         this.title = title;
-        this.author = author;
+        this.authorId = authorId;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setAuthor(Author author) {
-        this.author = author;
-    }
-
-    public void addGenre(Genre genre) {
-        genres.add(genre);
-        genre.addBook(this);
-    }
-
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -68,16 +33,43 @@ public class Book {
         this.title = title;
     }
 
-    public Author getAuthor() {
-        return author;
+    public int getAuthorId() {
+        return authorId;
     }
 
-    public Set<Genre> getGenres() {
+    public void setAuthorId(int authorId) {
+        this.authorId = authorId;
+    }
+
+    public List<Genre> getGenres() {
         return genres;
     }
 
-    public void setGenres(Set<Genre> genres) {
+    public void setGenres(List<Genre> genres) {
         this.genres = genres;
+    }
+
+    public void addGenre(Genre genre) {
+        if (!this.genres.contains(genre)) {
+            this.genres.add(genre);
+            genre.getBooks().add(this);
+        }
+    }
+
+    public void removeGenre(Genre genre) {
+        if (this.genres.remove(genre)) {
+            genre.getBooks().remove(this);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", authorId=" + authorId +
+                ", genres=" + genres +
+                '}';
     }
 
     @Override
@@ -85,11 +77,11 @@ public class Book {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Book book = (Book) o;
-        return id == book.id && Objects.equals(title, book.title) && Objects.equals(author, book.author);
+        return id == book.id && authorId == book.authorId && Objects.equals(title, book.title) && Objects.equals(genres, book.genres);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, author);
+        return Objects.hash(id, title, authorId, genres);
     }
 }

@@ -1,22 +1,23 @@
-package org.example.controller.dto;
+package org.example.servlet.dto;
 
 
 public class GenreDTO {
-    private Long id;
+    private int id;
     private String name;
 
-    public GenreDTO() {}
-
-    public GenreDTO(Long id, String name) {
+    public GenreDTO(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public Long getId() {
+    public GenreDTO() {
+    }
+
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

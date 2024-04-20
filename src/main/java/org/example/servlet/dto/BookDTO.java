@@ -1,27 +1,28 @@
-package org.example.controller.dto;
+package org.example.servlet.dto;
 
 import java.util.List;
 
 public class BookDTO {
-    private Long id;
+    private int id;
     private String title;
-    private Long authorId;
-    private List<Long> genreIds;
+    private int authorId;
+    private List<Integer> genreIds;
 
-    public BookDTO() {}
+    public BookDTO() {
+    }
 
-    public BookDTO(Long id, String title, Long authorId, List<Long> genreIds) {
+    public BookDTO(int id, String title, int authorId, List<Integer> genreIds) {
         this.id = id;
         this.title = title;
         this.authorId = authorId;
         this.genreIds = genreIds;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -33,19 +34,19 @@ public class BookDTO {
         this.title = title;
     }
 
-    public Long getAuthorId() {
+    public int getAuthorId() {
         return authorId;
     }
 
-    public void setAuthorId(Long authorId) {
+    public void setAuthorId(int authorId) {
         this.authorId = authorId;
     }
 
-    public List<Long> getGenreIds() {
+    public List<Integer> getGenreIds() {
         return genreIds;
     }
 
-    public void setGenreIds(List<Long> genreIds) {
+    public void setGenreIds(List<Integer> genreIds) {
         this.genreIds = genreIds;
     }
 
